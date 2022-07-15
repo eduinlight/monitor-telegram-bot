@@ -1,4 +1,6 @@
 use crate::{globals::FILE_PATH, types::AskRequest};
+use serde_json::Error;
+use std::fs;
 use std::io::Write;
 use std::{collections::HashMap, fs::File};
 use teloxide::types::{InlineKeyboardButton, InlineKeyboardMarkup};
@@ -37,4 +39,7 @@ pub fn save_to_file(ask_requests: &HashMap<i32, AskRequest>) -> () {
   }
 }
 
-pub fn load_from_file() -> () {}
+pub fn load_from_file() -> Result<HashMap<i32, AskRequest>, Error> {
+  let file_content = fs::read_to_string(FILE_PATH).expect("Error reading from db.json file");
+  serde_json::from_str::<HashMap<i32, AskRequest>>(&file_content)
+}

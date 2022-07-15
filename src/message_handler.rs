@@ -20,16 +20,20 @@ pub async fn message_handler(
       Ok(Command::Ask { title }) => {
         // Create a list of buttons and send them.
         let keyboard = make_keyboard();
+
         let msg_text = if title.is_empty() {
           "Actualización de ventas y rechazos: ".to_string()
         } else {
           (&title).to_string()
         };
+
         let sended_message = bot
           .send_message(m.chat.id, msg_text.clone())
           .reply_markup(keyboard)
           .await?;
-        HASHMAP.lock().await.insert(
+
+        let mut map = HASHMAP.lock().await;
+        map.insert(
           sended_message.id,
           AskRequest {
             message_id: sended_message.id,
@@ -37,12 +41,11 @@ pub async fn message_handler(
             responses: Vec::new(),
           },
         );
-        // save_to_file(&HASHMAP.lock().await.clone());
+
+        save_to_file(&map);
       }
 
-      Err(_) => {
-        bot.send_message(m.chat.id, "Command not found!").await?;
-      }
+      Err(_) => {}
     }
   }
 

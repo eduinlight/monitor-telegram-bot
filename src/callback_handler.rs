@@ -16,12 +16,11 @@ pub async fn callback_handler(
   if let Some(option) = q.data {
     match q.message.clone() {
       Some(Message { id, chat, .. }) => {
-        if HASHMAP.lock().await.contains_key(&id) {
+        let mut map = HASHMAP.lock().await;
+        if map.contains_key(&id) {
           let n = option.parse::<i32>().unwrap();
 
-          let mut question: AskRequest = HASHMAP
-            .lock()
-            .await
+          let mut question: AskRequest = map
             .get_mut(&id)
             .map(|v| v.clone())
             .unwrap();
@@ -62,7 +61,8 @@ pub async fn callback_handler(
             })
           }
 
-          HASHMAP.lock().await.insert(id, question.clone());
+          map.insert(id, question.clone());
+          save_to_file(&map);
 
           let keyboard = make_keyboard();
           bot

@@ -39,14 +39,17 @@ impl Display for Ask {
 impl Display for AskRequest {
   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
     let resp: String = self.title.to_owned();
+    let mut responses = self.responses.to_owned();
+
+    responses.sort_by(|a, b| a.user.first_name.cmp(&b.user.first_name));
+
     write!(
       f,
       "{}",
       format!(
         "{}\n\n{}",
         resp,
-        self
-          .responses
+        responses
           .iter()
           .map(|r| format!("{r}"))
           .collect::<Vec<String>>()
