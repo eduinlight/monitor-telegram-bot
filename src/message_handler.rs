@@ -1,6 +1,6 @@
-use crate::{globals::HASHMAP, utils::save_to_file};
 use crate::types::*;
-use crate::utils::make_keyboard;
+use crate::utils::{create_excel, make_keyboard};
+use crate::{globals::HASHMAP, utils::save_to_file};
 use std::error::Error;
 use teloxide::{adaptors::AutoSend, prelude::*, types::Message, utils::command::BotCommands, Bot};
 
@@ -43,9 +43,22 @@ pub async fn message_handler(
         );
 
         save_to_file(&map);
+        bot.delete_message(m.chat.id, m.id).await?;
+      }
+      Ok(Command::Report { chat_id }) => {
+        let map = HASHMAP.lock().await;
+        if let Some(question) = map.get(&chat_id) {
+          let file = create_excel(&question);
+          bot
+            .send_document(m.chat.id, file)
+            .await?;
+        }
+        bot.delete_message(m.chat.id, m.id).await?;
       }
 
-      Err(_) => {}
+      Err(_) => {
+        log::info!("Command not found");
+      }
     }
   }
 

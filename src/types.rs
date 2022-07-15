@@ -16,22 +16,40 @@ pub struct AskRequest {
   pub responses: Vec<Ask>,
 }
 
+impl Ask {
+  pub fn get_full_name(&self) -> String {
+    format!(
+      "{} {}",
+      String::from(self.user.to_owned().first_name),
+      String::from(self.user.to_owned().last_name.unwrap_or_default())
+    )
+  }
+
+  pub fn sells_to_string(&self) -> String {
+    if self.sells.is_some() {
+      self.sells.unwrap().to_string()
+    } else {
+      0.to_string()
+    }
+  }
+
+  pub fn refuse_to_string(&self) -> String {
+    if self.refuse.is_some() {
+      self.refuse.unwrap().to_string()
+    } else {
+      0.to_string()
+    }
+  }
+}
+
 impl Display for Ask {
   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
     write!(
       f,
-      "{} Ventas: {} Rechasos: {}",
+      "{} Ventas: {} Rechazos: {}",
       self.user.to_owned().first_name,
-      if self.sells.is_some() {
-        self.sells.unwrap().to_string()
-      } else {
-        0.to_string()
-      },
-      if self.refuse.is_some() {
-        self.refuse.unwrap().to_string()
-      } else {
-        0.to_string()
-      }
+      self.sells_to_string(),
+      self.refuse_to_string()
     )
   }
 }
@@ -47,7 +65,8 @@ impl Display for AskRequest {
       f,
       "{}",
       format!(
-        "{}\n\n{}",
+        "📝 {} \n{}\n\n{}",
+        self.message_id,
         resp,
         responses
           .iter()
@@ -69,4 +88,6 @@ pub enum Command {
   Help,
   #[command(description = "Preguntar por ventas")]
   Ask { title: String },
+  #[command(description = "Generar reporte")]
+  Report { chat_id: i32 },
 }

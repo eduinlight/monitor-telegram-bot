@@ -35,13 +35,13 @@ pub async fn callback_handler(
               if user.clone().id == r.user.id {
                 found = true;
                 Ask {
-                  sells: if n % 2 == 0 {
-                    Some(n / 2)
+                  sells: if n < 16 {
+                    Some(n)
                   } else {
                     r.clone().sells
                   },
-                  refuse: if n % 2 == 1 {
-                    Some(n / 2)
+                  refuse: if n >= 16 {
+                    Some(n - 16)
                   } else {
                     r.clone().refuse
                   },
