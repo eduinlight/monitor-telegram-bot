@@ -4,7 +4,7 @@ use std::fs;
 use std::io::Write;
 use std::{collections::HashMap, fs::File};
 use teloxide::types::{InlineKeyboardButton, InlineKeyboardMarkup, InputFile};
-use xlsxwriter::{FormatAlignment, FormatColor, FormatUnderline, Workbook};
+use xlsxwriter::{FormatAlignment, FormatColor, Workbook};
 
 pub fn make_keyboard() -> InlineKeyboardMarkup {
   let mut keyboard: Vec<Vec<InlineKeyboardButton>> = vec![];
@@ -30,8 +30,8 @@ pub fn make_keyboard() -> InlineKeyboardMarkup {
   InlineKeyboardMarkup::new(keyboard)
 }
 
-pub fn save_to_file(ask_requests: &HashMap<i32, AskRequest>) {
-  match File::create(FILE_PATH) {
+pub async fn save_to_file(ask_requests: &HashMap<i32, AskRequest>) {
+  match File::create(FILE_PATH.lock().await.to_owned()) {
     Ok(mut file) => {
       let json = serde_json::to_string(ask_requests).unwrap_or_default();
       write!(file, "{json}").expect("Error writing to file");
@@ -40,9 +40,15 @@ pub fn save_to_file(ask_requests: &HashMap<i32, AskRequest>) {
   }
 }
 
-pub fn load_from_file() -> Result<HashMap<i32, AskRequest>, Error> {
-  let file_content = fs::read_to_string(FILE_PATH).expect("Error reading from db.json file");
-  serde_json::from_str::<HashMap<i32, AskRequest>>(&file_content)
+pub async fn load_from_file(file_path: String) -> Result<HashMap<i32, AskRequest>, Error> {
+  match fs::read_to_string(file_path.clone()) {
+    Ok(content) => {
+      serde_json::from_str::<HashMap<i32, AskRequest>>(&content)
+    }
+    _ => {
+      Ok(HashMap::new())
+    }
+  }
 }
 
 pub fn create_excel(question: &AskRequest) -> InputFile {

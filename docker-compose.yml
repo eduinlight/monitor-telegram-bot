@@ -1,0 +1,16 @@
+version: "3.7"
+
+services:
+  bot:
+    image: "monitor-telegram-bot"
+    container_name: "monitor-telegram-bot"
+    build:
+      context: .
+      target: prod
+    restart: always
+    environment:
+      - TELOXIDE_TOKEN=${TELOXIDE_TOKEN}
+      - DB_PATH=${DB_PATH}
+    volumes:
+      - /home/light/.monitor-telegram-bot:/root/.monitor-telegram-bot
+

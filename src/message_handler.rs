@@ -42,7 +42,7 @@ pub async fn message_handler(
           },
         );
 
-        save_to_file(&map);
+        save_to_file(&map).await;
         bot.delete_message(m.chat.id, m.id).await?;
       }
       Ok(Command::Report { chat_id }) => {

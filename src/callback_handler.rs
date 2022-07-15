@@ -62,7 +62,7 @@ pub async fn callback_handler(
           }
 
           map.insert(id, question.clone());
-          save_to_file(&map);
+          save_to_file(&map).await;
 
           let keyboard = make_keyboard();
           bot
