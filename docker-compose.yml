@@ -10,7 +10,7 @@ services:
     restart: always
     environment:
       - TELOXIDE_TOKEN=${TELOXIDE_TOKEN}
-      - DB_PATH=${DB_PATH}
+      - DB_PATH=/root/.monitor-telegram-bot/db.json
     volumes:
       - /home/light/.monitor-telegram-bot:/root/.monitor-telegram-bot
 
