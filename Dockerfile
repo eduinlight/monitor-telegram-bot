@@ -1,13 +1,14 @@
-FROM rust:1.62.0 AS rust-image
+FROM rust:1.62.0-alpine AS rust-image
 WORKDIR /app
-RUN apt-get update && \
-      apt-get install -yq libclang-dev
+RUN apk add --update --no-cache musl-dev pkgconfig openssl-dev clang-dev
+ENV RUSTFLAGS="-C target-feature=-crt-static"
 
 FROM rust-image as build
 COPY src src
 COPY Cargo.* .
 RUN cargo build --release
 
-FROM build AS prod
-COPY --from=build /app/target/release .
-CMD ["./bot"]
+FROM alpine as prod
+RUN apk add --update --no-cache libgcc
+COPY --from=build /app/target/release/bot .
+ENTRYPOINT ["./bot"]
