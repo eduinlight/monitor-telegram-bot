@@ -10,13 +10,13 @@ pub async fn message_handler(
 ) -> Result<(), Box<dyn Error + Send + Sync>> {
   if let Some(text) = m.text() {
     match BotCommands::parse(text, "buttons") {
-      Ok(Command::Help) => {
-        // Just send the description of all commands.
-        bot
-          .send_message(m.chat.id, Command::descriptions().to_string())
-          .await?;
-        bot.delete_message(m.chat.id, m.id).await?;
-      }
+      // Ok(Command::Help) => {
+      //   // Just send the description of all commands.
+      //   bot
+      //     .send_message(m.chat.id, Command::descriptions().to_string())
+      //     .await?;
+      //   bot.delete_message(m.chat.id, m.id).await?;
+      // }
       Ok(Command::Ask { title }) => {
         // Create a list of buttons and send them.
         let keyboard = make_keyboard();

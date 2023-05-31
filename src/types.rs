@@ -84,8 +84,8 @@ impl Display for AskRequest {
   description = "Este bot es para ayudar en el control de ventas y rechasos."
 )]
 pub enum Command {
-  #[command(description = "Muestra esta ayuda")]
-  Help,
+  // #[command(description = "Muestra esta ayuda")]
+  // Help,
   #[command(description = "Preguntar por ventas")]
   Ask { title: String },
   #[command(description = "Generar reporte")]
